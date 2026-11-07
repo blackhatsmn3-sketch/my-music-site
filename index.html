@@ -69,18 +69,57 @@ body.night{background:#0d0612}
 /* ---------- z2: gingham tiles (first screen only) ---------- */
 #tiles{position:fixed;inset:0;height:100dvh;z-index:2;display:grid;perspective:900px;overflow:hidden}
 .tile{border:1px solid rgba(255,255,255,.35);box-shadow:inset 0 0 8px rgba(190,110,120,.12);
-  transition:transform .35s ease-in,opacity .35s ease-in;backface-visibility:hidden}
+  transition:transform .6s ease-in-out,opacity .6s ease-in-out;backface-visibility:hidden}
 .tile.a{background:#fbf4ef}
 .tile.b{background:#f4c9cf}
 .tile.flip{transform:rotateY(180deg);opacity:0}
 
-/* ---------- z3: prompt ---------- */
-#prompt{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;
-  color:var(--red);font-size:clamp(24px,7vw,38px);font-weight:800;text-align:center;padding:20px;
-  text-shadow:0 2px 0 #fff;pointer-events:none;animation:pulse 1.4s ease-in-out infinite;transition:opacity .3s}
-#prompt small{font-family:var(--font);font-size:.5em;font-weight:600;color:#c4605a}
-#prompt.hide{opacity:0}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+/* ---------- z5: opening presentation ---------- */
+#prompt{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:20px;
+  pointer-events:none;transition:opacity .6s,transform .6s;overflow:hidden}
+#prompt.hide{opacity:0;transform:scale(1.15)}
+.intro-card{position:relative;width:min(90vw,420px);padding:20px 18px 18px;text-align:center;border-radius:30px;
+  background:rgba(255,250,244,.92);border:3px solid #f2c4c9;
+  box-shadow:0 20px 50px rgba(150,70,80,.35),0 0 0 8px rgba(255,255,255,.4),0 0 40px rgba(255,150,180,.35);
+  animation:introIn 1s cubic-bezier(.2,1.3,.4,1) both;z-index:2}
+@keyframes introIn{from{opacity:0;transform:translateY(40px) scale(.85)}to{opacity:1;transform:none}}
+.intro-top{font-size:clamp(12px,3.6vw,15px);font-weight:800;letter-spacing:3px;text-transform:uppercase;color:#c4605a}
+.gift{width:110px;margin:4px auto 0;animation:giftBounce 1.8s ease-in-out infinite;transform-origin:50% 100%}
+.gift svg{width:100%;display:block;overflow:visible}
+.gift .lid{transform-box:fill-box;transform-origin:50% 100%;transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
+.gift.open .lid{transform:translateY(-34px) rotate(-14deg)}
+@keyframes giftBounce{0%,100%{transform:translateY(0) rotate(0)}20%{transform:translateY(-14px) rotate(-3deg)}40%{transform:translateY(0) rotate(3deg)}60%{transform:translateY(-6px) rotate(0)}80%{transform:translateY(0)}}
+.intro-title{font-family:var(--script);line-height:1.05;margin-top:2px}
+.intro-title .l1{display:block;font-size:clamp(30px,9vw,42px);color:#e0507e;text-shadow:0 2px 0 #fff}
+.intro-title .l2{display:block;font-size:clamp(26px,7.5vw,34px);color:#b8443a;text-shadow:0 2px 0 #fff}
+.intro-title .name{display:block;font-size:clamp(54px,17vw,80px);text-shadow:0 3px 0 #fff,0 6px 12px rgba(150,40,80,.25)}
+.intro-title .name span{display:inline-block;animation:letterBounce 1.6s ease-in-out infinite}
+@keyframes letterBounce{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-12px) rotate(-4deg)}60%{transform:translateY(0) rotate(3deg)}}
+.intro-sub{min-height:24px;margin-top:6px;font-size:clamp(14px,4vw,17px);font-weight:600;color:#b8443a;transition:opacity .5s}
+.intro-sub.out{opacity:0}
+.open-btn{margin-top:12px;display:inline-block;font-size:18px;animation:btnPulse 1.4s ease-in-out infinite}
+@keyframes btnPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.intro-note{display:block;margin-top:10px;font-size:13px;font-weight:600;color:#c4605a}
+.ib{position:absolute;bottom:-90px;animation:ibRise linear infinite;will-change:transform;opacity:.9}
+@keyframes ibRise{0%{transform:translate(0,0) rotate(-6deg)}50%{transform:translate(18px,-60dvh) rotate(6deg)}100%{transform:translate(-10px,-125dvh) rotate(-8deg)}}
+.ic{position:absolute;top:-24px;border-radius:2px;animation:icFall linear infinite;will-change:transform}
+@keyframes icFall{to{transform:translateY(115dvh) rotate(720deg)}}
+.isp{position:absolute;animation:twinkle2 2.2s ease-in-out infinite}
+@media (max-height:560px){
+  .gift{width:64px}.intro-title .name{font-size:46px}.intro-title .l1{font-size:26px}.intro-title .l2{font-size:20px}
+  .intro-card{padding:12px 14px}.open-btn{margin-top:6px}.intro-note{display:none}
+}
+
+/* ---------- reveal: friend1 photo shown by the flipping tiles ---------- */
+#reveal{position:fixed;inset:0;height:100dvh;z-index:1;pointer-events:none;
+  background-color:#f4c9cf;background-image:linear-gradient(135deg,#f9d6dc,#d9a7e0);
+  background-size:cover;background-position:center;transition:opacity 1.4s}
+#reveal.fade{opacity:0}
+#reveal-cap{position:absolute;left:0;right:0;bottom:0;padding:90px 16px calc(28px + env(safe-area-inset-bottom));text-align:center;
+  background:linear-gradient(transparent,rgba(30,5,25,.7));font-family:var(--script);color:#fff;
+  font-size:clamp(28px,8.5vw,58px);text-shadow:0 3px 14px rgba(0,0,0,.55);
+  opacity:0;transform:translateY(24px);transition:opacity 1s,transform 1s}
+#reveal-cap.show{opacity:1;transform:none}
 
 /* ---------- z4: floaters (falling cakes / rising balloons) ---------- */
 #rain{position:fixed;inset:0;z-index:4;pointer-events:none;overflow:hidden}
@@ -280,13 +319,40 @@ body.night{background:#0d0612}
   <div id="stars"></div>
 </div>
 
+<div id="reveal"><div id="reveal-cap">Happy Birthday, Chinnu 💖</div></div>
+
 <div id="bg-title">
   <span class="bt top">Happy Birthday</span>
   <span class="bt bot" id="bt-name">Chinnu.</span>
 </div>
 
 <div id="tiles"></div>
-<div id="prompt">🎁 Tap anywhere to unwrap!<small>(sound on 🔊)</small></div>
+<div id="prompt">
+  <div class="intro-card">
+    <div class="intro-top">✨ You're invited ✨</div>
+    <div class="gift" id="gift">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="60" cy="112" rx="38" ry="6" fill="rgba(120,60,70,.22)"/>
+        <rect x="18" y="52" width="84" height="56" rx="6" fill="#ff7aa8" stroke="#8a3a52" stroke-width="3" stroke-linejoin="round"/>
+        <rect x="54" y="52" width="12" height="56" fill="#ffe27a"/>
+        <g class="lid">
+          <rect x="12" y="34" width="96" height="22" rx="6" fill="#ff5c8a" stroke="#8a3a52" stroke-width="3" stroke-linejoin="round"/>
+          <rect x="54" y="34" width="12" height="22" fill="#ffe27a"/>
+          <path d="M60 34 C38 4 14 22 60 34Z" fill="#ffe27a" stroke="#8a3a52" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M60 34 C82 4 106 22 60 34Z" fill="#ffe27a" stroke="#8a3a52" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="60" cy="34" r="6" fill="#ffd04a" stroke="#8a3a52" stroke-width="3"/>
+        </g>
+      </svg>
+    </div>
+    <h1 class="intro-title">
+      <span class="l1">Happy Birthday</span>
+      <span class="name" id="intro-name">Chinnu</span>
+    </h1>
+    <p class="intro-sub" id="intro-sub">A little surprise is waiting for you 💖</p>
+    <button class="pill open-btn" id="open-btn" type="button">Open Surprise 🎁</button>
+    <span class="intro-note">🔊 Turn your sound on</span>
+  </div>
+</div>
 <div id="rain"></div>
 <div id="hangers"></div>
 
@@ -725,10 +791,11 @@ function addHearts(el, n){
 })();
 
 /* ===== 2. Gingham tile unwrap (reveals the night sky) ===== */
-var tilesEl = $('tiles'), tileList = [];
+var tilesEl = $('tiles'), tileList = [], tileCols = 1, photoOk = false;
 function buildTiles(){
   var size = 55;
   var cols = Math.ceil(window.innerWidth/size), rows = Math.ceil(window.innerHeight/size);
+  tileCols = cols;
   tilesEl.style.gridTemplateColumns = 'repeat('+cols+', 1fr)';
   tilesEl.style.gridTemplateRows = 'repeat('+rows+', 1fr)';
   var frag = document.createDocumentFragment();
@@ -747,7 +814,7 @@ buildTiles();
 (function(){
   var cover = document.createElement('div');
   cover.id = 'cover';
-  cover.style.cssText = 'position:fixed;inset:0;z-index:1;pointer-events:none';
+  cover.style.cssText = 'position:fixed;inset:0;z-index:2;pointer-events:none';
   cover.className = 'gingham';
   document.body.insertBefore(cover, $('bg-night').nextSibling);
   cover.style.transition = 'opacity .2s';
@@ -1034,6 +1101,63 @@ function tickConfetti(){
   else { confettiRunning = false; cx.clearRect(0,0,window.innerWidth,window.innerHeight); }
 }
 
+/* ===== friend1.jpg preloaded: revealed in full by the flipping tiles ===== */
+loadPhoto(['friend1'], function(url){
+  photoOk = true;
+  $('reveal').style.backgroundImage = 'url("'+url+'")';
+});
+$('reveal-cap').textContent = 'Happy Birthday, ' + NAME + ' 💖';
+
+/* ===== Opening presentation (balloons, confetti, sparkles, bouncing name) ===== */
+(function(){
+  var nameEl = $('intro-name'), cols = ['#e0507e','#ff9a3c','#c2185b','#ffb300','#e0507e','#8e44ad'];
+  nameEl.textContent = '';
+  NAME.split('').forEach(function(ch, i){
+    var sp = document.createElement('span');
+    sp.textContent = ch === ' ' ? '\u00a0' : ch;
+    sp.style.color = cols[i % cols.length];
+    sp.style.animationDelay = (i*0.12).toFixed(2) + 's';
+    nameEl.appendChild(sp);
+  });
+
+  var box = $('prompt'), frag = document.createDocumentFragment(), i, el;
+  var BAL = ['🎈','🎈','🎀','💖','🧸','🎈','🎂','🌸'];
+  for(i=0;i<8;i++){
+    el = document.createElement('div'); el.className = 'ib'; el.textContent = BAL[i];
+    el.style.left = (4 + i*12 + rand(-3,3)).toFixed(1) + '%';
+    el.style.fontSize = rand(28,46).toFixed(0) + 'px';
+    el.style.animationDuration = rand(9,15).toFixed(1) + 's';
+    el.style.animationDelay = (-rand(0,12)).toFixed(1) + 's';
+    frag.appendChild(el);
+  }
+  var CC = ['#ff4757','#ffa502','#ffd32a','#2ed573','#1e90ff','#a55eea','#ff6b81'];
+  for(i=0;i<26;i++){
+    el = document.createElement('div'); el.className = 'ic';
+    el.style.left = rand(0,100).toFixed(1) + '%';
+    el.style.width = rand(6,10).toFixed(0) + 'px'; el.style.height = rand(8,14).toFixed(0) + 'px';
+    el.style.background = CC[i % CC.length];
+    el.style.animationDuration = rand(5,9).toFixed(1) + 's';
+    el.style.animationDelay = (-rand(0,9)).toFixed(1) + 's';
+    frag.appendChild(el);
+  }
+  for(i=0;i<10;i++){
+    el = document.createElement('div'); el.className = 'isp'; el.textContent = '✨';
+    el.style.left = rand(3,92).toFixed(1) + '%'; el.style.top = rand(4,90).toFixed(1) + '%';
+    el.style.fontSize = rand(14,26).toFixed(0) + 'px';
+    el.style.animationDelay = (-rand(0,3)).toFixed(1) + 's';
+    frag.appendChild(el);
+  }
+  box.appendChild(frag);
+
+  var msgs = ['A little surprise is waiting for you 💖','Make a wish… something magical awaits ✨','Gifts, giggles & lots of love 🎁','Today is all about you, ' + NAME + '! 🥳'];
+  var mi = 0, sub = $('intro-sub');
+  setInterval(function(){
+    if(started) return;
+    sub.classList.add('out');
+    setTimeout(function(){ mi = (mi+1) % msgs.length; sub.textContent = msgs[mi]; sub.classList.remove('out'); }, 500);
+  }, 3000);
+})();
+
 /* ===== Initial tap: fullscreen + audio + flip tiles ===== */
 function onFirstTap(){
   if(started) return;
@@ -1059,17 +1183,31 @@ function onFirstTap(){
   document.body.classList.remove('gingham');
   document.body.classList.add('night');
 
-  var pops = 0;
-  tileList.forEach(function(t){
-    var delay = Math.random()*700;
+  $('gift').classList.add('open');
+  launchConfetti(90); vibrate([40,30,40]);
+
+  // slow diagonal wave of flips (~3s in total) that uncovers the friend1 photo
+  var pops = 0, rows = Math.ceil(tileList.length / tileCols), FLIP_MS = 2400;
+  tileList.forEach(function(t, idx){
+    var c = idx % tileCols, r = Math.floor(idx / tileCols);
+    var wave = (c / Math.max(1, tileCols-1) + r / Math.max(1, rows-1)) / 2;   // 0..1 from top-left to bottom-right
+    var delay = 300 + wave * (FLIP_MS - 600) + Math.random() * 600;
     setTimeout(function(){
       t.classList.add('flip');
-      if(pops < 25 && Math.random() < 0.05){ pops++; sfxPop(); }
+      if(pops < 30 && Math.random() < 0.05){ pops++; sfxPop(); }
     }, delay);
   });
 
+  // photo fully revealed: caption + confetti, hold a moment, then move on to the night scene
+  var REVEAL_DONE = 300 + FLIP_MS + 600;   // last tile has finished flipping
+  var HOLD = photoOk ? 2600 : 300;
   setTimeout(function(){
     tilesEl.style.display = 'none';
+    if(photoOk){ $('reveal-cap').classList.add('show'); sfxFanfare(); launchConfetti(140); vibrate([80,40,80]); }
+  }, REVEAL_DONE);
+
+  setTimeout(function(){
+    $('reveal').classList.add('fade');
     $('prompt').style.display = 'none';
     startRain();
     $('bg-title').classList.add('show');
@@ -1080,7 +1218,7 @@ function onFirstTap(){
     $('card').classList.add('show');
     showStage('stage1');
     parallaxLoop();
-  }, 1100);
+  }, REVEAL_DONE + HOLD);
 }
 document.addEventListener('click', onFirstTap);
 document.addEventListener('touchend', onFirstTap);
